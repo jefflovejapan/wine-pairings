@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14E46" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Food" syncable="YES">
+        <attribute name="foodType" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="goodVarietals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Varietal" inverseName="suitableFoodPairings" inverseEntity="Varietal" syncable="YES"/>
+    </entity>
+    <entity name="Seasoning" syncable="YES">
+        <attribute name="flavorProfile" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="goodVarietals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Varietal" inverseName="sutableSeasonings" inverseEntity="Varietal" syncable="YES"/>
+    </entity>
+    <entity name="Varietal" syncable="YES">
+        <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="worksWithSpice" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <relationship name="suitableFoodPairings" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Food" inverseName="goodVarietals" inverseEntity="Food" syncable="YES"/>
+        <relationship name="sutableSeasonings" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Seasoning" inverseName="goodVarietals" inverseEntity="Seasoning" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Varietal" positionX="-198" positionY="-451" width="128" height="28"/>
+        <element name="Food" positionX="34" positionY="-64" width="128" height="28"/>
+        <element name="Seasoning" positionX="43" positionY="-337" width="128" height="28"/>
+    </elements>
+</model>
