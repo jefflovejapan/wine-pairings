@@ -13,6 +13,7 @@
 		1FB522481B51567800322084 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FB522471B51567800322084 /* Images.xcassets */; };
 		1FB5224B1B51567800322084 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FB522491B51567800322084 /* LaunchScreen.xib */; };
 		1FB522571B51567800322084 /* wine_pairingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB522561B51567800322084 /* wine_pairingsTests.swift */; };
+		1FD4F5AD1B515EBC009647C2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD4F5AC1B515EBC009647C2 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		1FB522501B51567800322084 /* wine-pairingsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "wine-pairingsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FB522551B51567800322084 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FB522561B51567800322084 /* wine_pairingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wine_pairingsTests.swift; sourceTree = "<group>"; };
+		1FD4F5AC1B515EBC009647C2 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 			children = (
 				1FB5223D1B51567800322084 /* AppDelegate.swift */,
 				1FB522421B51567800322084 /* LandingViewController.swift */,
+				1FD4F5AC1B515EBC009647C2 /* Extensions.swift */,
 				1FB522471B51567800322084 /* Images.xcassets */,
 				1FB522491B51567800322084 /* LaunchScreen.xib */,
 				1FB5223F1B51567800322084 /* wine_pairings.xcdatamodeld */,
@@ -214,6 +217,7 @@
 				1FB522431B51567800322084 /* LandingViewController.swift in Sources */,
 				1FB5223E1B51567800322084 /* AppDelegate.swift in Sources */,
 				1FB522411B51567800322084 /* wine_pairings.xcdatamodeld in Sources */,
+				1FD4F5AD1B515EBC009647C2 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
