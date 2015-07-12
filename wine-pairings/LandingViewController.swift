@@ -18,6 +18,8 @@ class LandingViewController: UIViewController {
     
     let seasoningButton = { UIButton.wineQuestionButton("Choose a seasoning", answeredTitle:"Seasoning chosen") }()
     
+    let buttonBox = { UIView() }()
+    
     var maybeButtons: [UIButton]?
     var maybeSpacers: [UIView]?
     
@@ -27,20 +29,25 @@ class LandingViewController: UIViewController {
         super.viewDidLoad()
         let theButtons = [wineColorButton, foodTypeButton, spicinessButton, seasoningButton]
         let theSpacers = Array(0..<theButtons.count + 1).map{ Void in self.newSpacerView() }
+        buttonBox.setTranslatesAutoresizingMaskIntoConstraints(false)
+        view.addSubview(buttonBox)
+        
         
         let prepAndAddToView = { (aView: UIView) -> Void in
             aView.setTranslatesAutoresizingMaskIntoConstraints(false)
-            self.view.addSubview(aView)
+            self.buttonBox.addSubview(aView)
         }
         
         [theButtons, theSpacers].map{ $0.map(prepAndAddToView) }
-        self.maybeButtons = theButtons
-        self.maybeSpacers = theSpacers
+        maybeButtons = theButtons
+        maybeSpacers = theSpacers
         view.setNeedsUpdateConstraints()
     }
     
     override func updateViewConstraints() {
-        super.updateViewConstraints()
+        var boxConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[tlg][box]|", options: .allZeros, metrics: nil, views: ["tlg": topLayoutGuide, "box": buttonBox])
+        boxConstraints += NSLayoutConstraint.constraintsWithVisualFormat("|[box]|", options: .allZeros, metrics: nil, views: ["box": buttonBox])
+        view.addConstraints(boxConstraints)
         if let spacers = self.maybeSpacers, buttons = self.maybeButtons {
             let equalHeightConstraints: [NSLayoutConstraint] = equalHeightConstraintsForButtons(buttons, spacers:spacers)
             let distributedPosConstraints: [NSLayoutConstraint] = distributedPosConstraintsForButtons(buttons, spacers:spacers)
@@ -49,6 +56,7 @@ class LandingViewController: UIViewController {
             allConstraints.append(centered)
             view.addConstraints(allConstraints)
         }
+        super.updateViewConstraints()
     }
     
     override func didReceiveMemoryWarning() {
