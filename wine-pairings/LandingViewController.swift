@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class LandingViewController: UIViewController {
     
@@ -22,12 +23,15 @@ class LandingViewController: UIViewController {
     
     var maybeButtons: [UIButton]?
     var maybeSpacers: [UIView]?
+    var maybeVarietals: [Varietal]?
     
     //    MARK: View Controller life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        println("maybe varietals: \(self.maybeVarietals)")
         let theButtons = [wineColorButton, foodTypeButton, spicinessButton, seasoningButton]
+        theButtons.map{ $0.addTarget(self, action:"wineButtonTapped:", forControlEvents: .TouchUpInside ) }
         let theSpacers = Array(0..<theButtons.count + 1).map{ Void in self.newSpacerView() }
         buttonBox.setTranslatesAutoresizingMaskIntoConstraints(false)
         view.addSubview(buttonBox)
@@ -135,6 +139,12 @@ class LandingViewController: UIViewController {
         return aView
     }
     
+    // MARK: Actions
+    
+    func wineButtonTapped(sender: UIButton) {
+        let vc = SelectionViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
     
 }
