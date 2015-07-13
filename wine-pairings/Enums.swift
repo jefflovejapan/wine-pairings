@@ -20,6 +20,9 @@ enum VarietalName: String {
     case Malbec = "malbec"
     case Zinfandel = "zinfandel"
     case Sparkling = "sparkling"
+    static func allValues() -> [VarietalName] {
+        return [.PinotGrigio, .SauvignonBlanc, .Chardonnay, .Riesling, .Viognier, .CabarnetSauvignon, .Merlot, .PinotNoir, .Malbec, .Zinfandel, .Sparkling]
+    }
 }
 
 enum EntityType: String {
@@ -40,6 +43,9 @@ enum FoodType: String {
     case Fish = "fish"
     case Pasta = "pasta"
     case Salad = "salad"
+    static func allValues() -> [FoodType] {
+        return [.RedMeat, .WhiteMeat, .Fish, .Pasta, .Salad]
+    }
 }
 
 enum SeasoningType: String {
@@ -48,4 +54,15 @@ enum SeasoningType: String {
     case Cream = "cream"
     case Herbs = "herbs"
     case Butter = "butter"
+    static func allValues() -> [SeasoningType] {
+        return [.Smokey, .Citrus, .Cream, .Herbs, .Butter]
+    }
+}
+
+enum SpicinessType: String {
+    case Spicy = "spicy"
+    case NotSpicy = "not spicy"
+    static func allValues() -> [SpicinessType] {
+        return [.Spicy, .NotSpicy]
+    }
 }

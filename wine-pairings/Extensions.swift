@@ -9,6 +9,8 @@
 import UIKit
 import CoreData
 
+let WINE_QUESTION_LABEL_FONT_SIZE = CGFloat(18.0)
+
 extension UIButton {
     enum ButtonImage: String {
         case BlueBackgroundImage = "button-blue-bg"
@@ -23,11 +25,21 @@ extension UIButton {
         }
         newButton.contentEdgeInsets = UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
         newButton.layer.cornerRadius = 8.0
-        
+        newButton.setTranslatesAutoresizingMaskIntoConstraints(false)
         newButton.layer.masksToBounds = true
         newButton.setTitle(unansweredTitle, forState: .Normal)
         newButton.setTitle(answeredTitle, forState: .Selected)
         return newButton
+    }
+}
+
+extension UILabel {
+    class func wineAnswerLabel() -> UILabel {
+        let aLabel = UILabel()
+        aLabel.setTranslatesAutoresizingMaskIntoConstraints(false)
+        aLabel.font = UIFont.systemFontOfSize(WINE_QUESTION_LABEL_FONT_SIZE)
+        aLabel.textAlignment = .Center
+        return aLabel
     }
 }
 
@@ -148,6 +160,14 @@ extension Varietal {
             let pairingsArray = Array(self.suitableFoodPairings)
             let foodTypes = pairingsArray.map{ FoodType(rawValue: $0.foodTypeString) }.map{ $0! }
             return Set(foodTypes)
+        }
+    }
+    
+    var seasoningPairings: Set<SeasoningType> {
+        get {
+            let pairingsArray = Array(self.suitableSeasonings)
+            let seasoningTypes = pairingsArray.map{ SeasoningType(rawValue: $0.seasoningTypeString) }.map{ $0! }
+            return Set(seasoningTypes)
         }
     }
 }

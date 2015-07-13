@@ -10,6 +10,7 @@
 		1F86964E1B5325B5006AD9C5 /* Varietal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F86964D1B5325B5006AD9C5 /* Varietal.swift */; };
 		1F8696501B5325B5006AD9C5 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F86964F1B5325B5006AD9C5 /* Food.swift */; };
 		1F8696521B5325B5006AD9C5 /* Seasoning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8696511B5325B5006AD9C5 /* Seasoning.swift */; };
+		1F8696541B532714006AD9C5 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8696531B532714006AD9C5 /* Functions.swift */; };
 		1FB5223E1B51567800322084 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB5223D1B51567800322084 /* AppDelegate.swift */; };
 		1FB522411B51567800322084 /* wine_pairings.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FB5223F1B51567800322084 /* wine_pairings.xcdatamodeld */; };
 		1FB522431B51567800322084 /* LandingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB522421B51567800322084 /* LandingViewController.swift */; };
@@ -35,6 +36,7 @@
 		1F86964D1B5325B5006AD9C5 /* Varietal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Varietal.swift; sourceTree = "<group>"; };
 		1F86964F1B5325B5006AD9C5 /* Food.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
 		1F8696511B5325B5006AD9C5 /* Seasoning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Seasoning.swift; sourceTree = "<group>"; };
+		1F8696531B532714006AD9C5 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		1FB522381B51567800322084 /* wine-pairings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "wine-pairings.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FB5223C1B51567800322084 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1FB5223D1B51567800322084 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				1FD4F5B01B52AEF7009647C2 /* SelectionViewController.swift */,
 				1FD4F5AC1B515EBC009647C2 /* Extensions.swift */,
 				1FDA9C951B52B47700E3DB21 /* Enums.swift */,
+				1F8696531B532714006AD9C5 /* Functions.swift */,
 				1FB522471B51567800322084 /* Images.xcassets */,
 				1FB522491B51567800322084 /* LaunchScreen.xib */,
 				1FB5223F1B51567800322084 /* wine_pairings.xcdatamodeld */,
@@ -232,6 +235,7 @@
 				1FD4F5B11B52AEF7009647C2 /* SelectionViewController.swift in Sources */,
 				1FB522431B51567800322084 /* LandingViewController.swift in Sources */,
 				1FB5223E1B51567800322084 /* AppDelegate.swift in Sources */,
+				1F8696541B532714006AD9C5 /* Functions.swift in Sources */,
 				1F8696521B5325B5006AD9C5 /* Seasoning.swift in Sources */,
 				1FB522411B51567800322084 /* wine_pairings.xcdatamodeld in Sources */,
 				1FDA9C961B52B47700E3DB21 /* Enums.swift in Sources */,
