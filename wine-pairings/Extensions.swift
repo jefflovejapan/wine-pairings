@@ -158,7 +158,7 @@ extension Varietal {
     var foodPairings: Set<FoodType> {
         get {
             let pairingsArray = Array(self.suitableFoodPairings)
-            let foodTypes = pairingsArray.map{ FoodType(rawValue: $0.foodTypeString) }.map{ $0! }
+            let foodTypes = pairingsArray.map{ FoodType(rawValue: $0.foodTypeString) }.filter{ $0 != nil }.map{ $0! }
             return Set(foodTypes)
         }
     }
@@ -166,7 +166,7 @@ extension Varietal {
     var seasoningPairings: Set<SeasoningType> {
         get {
             let pairingsArray = Array(self.suitableSeasonings)
-            let seasoningTypes = pairingsArray.map{ SeasoningType(rawValue: $0.seasoningTypeString) }.map{ $0! }
+            let seasoningTypes = pairingsArray.map{ SeasoningType(rawValue: $0.seasoningTypeString) }.filter{ $0 != nil }.map{ $0! }
             return Set(seasoningTypes)
         }
     }
