@@ -11,22 +11,51 @@ import CoreData
 
 class LandingViewController: UIViewController {
     
-    let foodTypeButton = { UIButton.wineQuestionButton("What kind of food are you eating?", answeredTitle:"Food type selected") }()
-    let foodTypeLabel = { UILabel.wineAnswerLabel() }()
+    let foodTypeButton = UIButton.wineQuestionButton("What kind of food are you eating?", answeredTitle:"Food type selected")
+    let foodTypeLabel = UILabel.wineAnswerLabel()
     
-    let spicinessButton = { UIButton.wineQuestionButton("Is it spicy?", answeredTitle:"Spiciness selected") }()
-    let spicinessLabel = { UILabel.wineAnswerLabel() }()
+    let spicinessButton = UIButton.wineQuestionButton("Is it spicy?", answeredTitle:"Spiciness selected")
+    let spicinessLabel = UILabel.wineAnswerLabel()
     
-    let seasoningButton = { UIButton.wineQuestionButton("How is the food seasoned?", answeredTitle:"Seasoning selected") }()
-    let seasoningLabel = { UILabel.wineAnswerLabel() }()
+    let seasoningButton = UIButton.wineQuestionButton("How is the food seasoned?", answeredTitle:"Seasoning selected")
+    let seasoningLabel = UILabel.wineAnswerLabel()
     
-    let buttonBox = { UIView() }()
+    let clearAllButton = { _ -> UIButton in
+        let button = UIButton()
+        button.setTranslatesAutoresizingMaskIntoConstraints(false)
+        button.setTitle("Clear All", forState: .Normal)
+        button.setTitleColor(UIColor.grayColor(), forState: .Normal)
+        return button
+        }()
     
-    var maybeButtons: [UIButton]?
-    var maybeLabels: [UILabel]?
-    var maybeSpacers: [UIView]?
-    var maybeContext: NSManagedObjectContext?
-    var maybeVarietals: [Varietal]?
+    let buttonBox = UIView()
+    
+    lazy var otherBox = { _ -> UIView in
+        let box = UIView()
+        box.setTranslatesAutoresizingMaskIntoConstraints(false)
+        return box
+        }()
+    
+    lazy var filteredVarietalsLabel = { _ -> UILabel in
+        let label = UILabel()
+        label.font = UIFont.systemFontOfSize(16.0)
+        label.setTranslatesAutoresizingMaskIntoConstraints(false)
+        label.textColor = UIColor.grayColor()
+        label.numberOfLines = 0
+        return label
+        }()
+    
+    var questionButtons: [UIButton]?
+    var answerLabels: [UILabel]?
+    var spacers: [UIView]?
+    var managedObjectContext: NSManagedObjectContext?
+    var allVarietals: [Varietal]?
+    var filteredVarietals: [Varietal]?
+    
+    var foodTypeFilter: FilterClosure?
+    var spicinessFilter: FilterClosure?
+    var seasoningFilter: FilterClosure?
+    
     
     //    MARK: View Controller life cycle
     
@@ -36,54 +65,122 @@ class LandingViewController: UIViewController {
         theButtons.map{ $0.addTarget(self, action:"wineButtonTapped:", forControlEvents: .TouchUpInside ) }
         let theSpacers = Array(0..<theButtons.count + 1).map{ Void in self.newSpacerView() }
         let theLabels = [foodTypeLabel, spicinessLabel, seasoningLabel]
-        buttonBox.setTranslatesAutoresizingMaskIntoConstraints(false)
-        view.addSubview(buttonBox)
+        [buttonBox, otherBox].map{ aView -> Void in
+            aView.setTranslatesAutoresizingMaskIntoConstraints(false)
+            self.view.addSubview(aView)
+        }
+        otherBox.addSubview(filteredVarietalsLabel)
         
         [theButtons, theSpacers, theLabels].flatMap{ $0 }.map{ self.buttonBox.addSubview($0) }
-        maybeButtons = theButtons
-        maybeSpacers = theSpacers
-        maybeLabels = theLabels
+        questionButtons = theButtons
+        answerLabels = theLabels
+        spacers = theSpacers
+        view.addSubview(clearAllButton)
+        clearAllButton.addTarget(self, action: "clearButtonTapped", forControlEvents: UIControlEvents.TouchUpInside)
+
         view.setNeedsUpdateConstraints()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        if(self.maybeVarietals == nil) {
-            if let context = self.maybeContext {
-                self.maybeVarietals = allVarietalsFromContext(context)
+        if(self.allVarietals == nil) {
+            if let context = self.managedObjectContext {
+                self.allVarietals = allVarietalsFromContext(context)
+            }
+        }
+        updateButtonsAndLabels()
+    }
+    
+    override func updateViewConstraints() {
+        
+        let nestedWidthConstraints = [buttonBox, otherBox].map{ (aBox: UIView) -> [NSLayoutConstraint] in
+            NSLayoutConstraint.constraintsWithVisualFormat("|[box]|", options: .allZeros, metrics: nil, views: ["box": aBox]) as! [NSLayoutConstraint]
+        }
+        let boxWidthConstraints = nestedWidthConstraints.flatMap{ $0 }
+        var boxHeightConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[tlg][box][otherBox(==box)]|", options: .allZeros, metrics: nil, views: ["tlg":topLayoutGuide, "box": buttonBox, "otherBox": otherBox]) as! [NSLayoutConstraint]
+        view.addConstraints(boxWidthConstraints + boxHeightConstraints)
+        if let spacers = spacers, buttons = questionButtons, labels = answerLabels {
+            let equalHeightConstraints: [NSLayoutConstraint] = equalHeightConstraintsForButtons(buttons, spacers:spacers, labels: labels)
+            let distributedPosConstraints: [NSLayoutConstraint] = distributedPosConstraintsForButtons(buttons, spacers:spacers)
+            let labelConstraints: [NSLayoutConstraint] = posConstraintsForButtons(buttons, labels: labels)
+            let centered = NSLayoutConstraint(item: spacers[0], attribute: .CenterX, relatedBy: .Equal, toItem: self.view, attribute: .CenterX, multiplier: 1.0, constant: 0.0)
+            var allConstraints = equalHeightConstraints + distributedPosConstraints + labelConstraints
+            allConstraints.append(centered)
+            view.addConstraints(allConstraints)
+        }
+        
+        let varietalLabelHeightConstraints  = NSLayoutConstraint.constraintsWithVisualFormat("V:|-(in)-[label]-(in)-|", options: .allZeros, metrics: ["in": 12], views: ["label": filteredVarietalsLabel]) as! [NSLayoutConstraint]
+        let varietalLabelWidthConstraints = NSLayoutConstraint.constraintsWithVisualFormat("|-(in)-[label]-(in)-|", options: .allZeros, metrics: ["in": 12], views: ["label": filteredVarietalsLabel]) as! [NSLayoutConstraint]
+        view.addConstraints(varietalLabelWidthConstraints + varietalLabelHeightConstraints)
+        
+        let clearButtonXConstraints = NSLayoutConstraint.constraintsWithVisualFormat("[btn]-(in)-|", options: .allZeros, metrics: ["in": 20], views: ["btn": clearAllButton])
+        let clearButtonYConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[btn]-(in)-|", options: .allZeros, metrics: ["in": 20], views: ["btn": clearAllButton])
+        view.addConstraints(clearButtonXConstraints + clearButtonYConstraints)
+        
+        super.updateViewConstraints()
+    }
+    
+    func updateButtonsAndLabels() {
+        if let varietals = allVarietals {
+            let filters = [foodTypeFilter, spicinessFilter, seasoningFilter].filter{ $0 != nil}.map{ $0! }
+            if filters.count > 0 {
+                let filtered = applyFilters(filters, toVarietals:varietals)
+                filteredVarietalsLabel.text = labelTextForVarietals(filtered)
+                filteredVarietals = filtered
+            } else {
+                filteredVarietalsLabel.text = nil
+            }
+        }
+        if let buttons = questionButtons {
+            if (buttons.filter{ $0.state == .Selected }.count > 0) {
+                clearAllButton.hidden = false
+            } else {
+                clearAllButton.hidden = true
             }
         }
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        println(self.maybeVarietals)
+//    MARK: Update UI
+    
+    func clearFilters() {
+        seasoningFilter = nil
+        spicinessFilter = nil
+        foodTypeFilter = nil
     }
     
-    override func updateViewConstraints() {
-        var boxConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[tlg][box]|", options: .allZeros, metrics: nil, views: ["tlg": topLayoutGuide, "box": buttonBox])
-        boxConstraints += NSLayoutConstraint.constraintsWithVisualFormat("|[box]|", options: .allZeros, metrics: nil, views: ["box": buttonBox])
-        view.addConstraints(boxConstraints)
-        if let spacers = self.maybeSpacers, buttons = self.maybeButtons, labels = self.maybeLabels {
-            let equalHeightConstraints: [NSLayoutConstraint] = equalHeightConstraintsForButtons(buttons, spacers:spacers, labels: labels)
-            let distributedPosConstraints: [NSLayoutConstraint] = distributedPosConstraintsForButtons(buttons, spacers:spacers)
-            let labelConstrainsts: [NSLayoutConstraint] = posConstraintsForButtons(buttons, labels: labels)
-            let centered = NSLayoutConstraint(item: spacers[0], attribute: .CenterX, relatedBy: .Equal, toItem: self.view, attribute: .CenterX, multiplier: 1.0, constant: 0.0)
-            var allConstraints = equalHeightConstraints + distributedPosConstraints
-            allConstraints.append(centered)
-            view.addConstraints(allConstraints)
-        }
-        super.updateViewConstraints()
+    func deselectButtons() {
+        questionButtons?.map{ $0.selected = false }
     }
     
+    func clearAnswerLabels() {
+        answerLabels?.map{ $0.text = nil }
+    }
     
     //    MARK: Helper functions
     
+    func labelTextForVarietals(varietals: [Varietal]) -> String {
+        if varietals.count > 1 {
+            let stub = "Consider these varietals:\n"
+            let names = varietals.map{ "\n" + $0.varietalName.rawValue.capitalizedString }
+            return reduce(names, stub, +)
+        } else if varietals.count == 1 {
+            return "Consider \(varietals[0].varietalName.rawValue)"
+        }
+        return "No varietals match your query. Maybe stick with water."
+    }
+    
+    func applyFilters(filters:[FilterClosure], toVarietals varietalsToFilter:[Varietal]) -> [Varietal] {
+        var remainingVarietals = varietalsToFilter
+        for filter in filters {
+            remainingVarietals = remainingVarietals.filter(filter)
+        }
+        return remainingVarietals
+    }
     
     func posConstraintsForButtons(buttons: [UIButton], labels: [UILabel]) -> [NSLayoutConstraint] {
         let zipped = Array(zip(buttons, labels))
         let nestedConstraints = zipped.map{
-            NSLayoutConstraint.constraintsWithVisualFormat("V:[btn]-(sp)-[label]", options: .AlignAllCenterX, metrics: ["sp": 15], views: ["btn": $0.0, "label": $0.1])
+            NSLayoutConstraint.constraintsWithVisualFormat("V:[btn]-(sp)-[label]", options: .AlignAllCenterX, metrics: ["sp": 8], views: ["btn": $0.0, "label": $0.1])
         }
         let constraints = nestedConstraints.flatMap{ $0 }
         if let const = constraints as? [NSLayoutConstraint] {
@@ -169,7 +266,7 @@ class LandingViewController: UIViewController {
     
     func wineButtonTapped(sender: UIButton) {
         let vc = SelectionViewController()
-        
+        unowned let welf = self
         if sender == foodTypeButton {
             let filterGen: FilterClosureGenerator = { foodTypeString in
                 let foodType = FoodType(rawValue:foodTypeString)
@@ -185,15 +282,9 @@ class LandingViewController: UIViewController {
             }
             vc.maybeChoices = FoodType.allValues().map{ $0.rawValue }
             vc.completionFunc = { completionStr in
-                self.foodTypeLabel.text = completionStr
-                if let varietals = self.maybeVarietals {
-                    println("Varietals before filter: \(varietals)")
-                    let filterFunc = filterGen(completionStr)
-                    println("FilterFunc: \(filterFunc)")
-                    let filtered = varietals.filter(filterFunc)
-                    println("Filtered: \(filtered)")
-                    self.maybeVarietals = filtered
-                }
+                welf.foodTypeLabel.text = completionStr.capitalizedString
+                welf.foodTypeButton.selected = true
+                welf.foodTypeFilter = filterGen(completionStr)
             }
         } else if sender == spicinessButton {
             let filterGen: FilterClosureGenerator = { spicinessString in
@@ -215,10 +306,9 @@ class LandingViewController: UIViewController {
             }
             vc.maybeChoices = SpicinessType.allValues().map{ $0.rawValue }
             vc.completionFunc = { completionStr in
-                self.spicinessLabel.text = completionStr
-                if let varietals = self.maybeVarietals {
-                    self.maybeVarietals = varietals.filter(filterGen(completionStr))
-                }
+                welf.spicinessLabel.text = completionStr.capitalizedString
+                welf.spicinessButton.selected = true
+                welf.spicinessFilter = filterGen(completionStr)
             }
         } else if sender == seasoningButton {
             let filterGen: FilterClosureGenerator = { seasoningString -> (Varietal -> Bool) in
@@ -235,15 +325,20 @@ class LandingViewController: UIViewController {
             }
             vc.maybeChoices = SeasoningType.allValues().map{ $0.rawValue }
             vc.completionFunc = { completionStr in
-                self.seasoningLabel.text = completionStr
-                if let varietals = self.maybeVarietals {
-                    self.maybeVarietals = varietals.filter(filterGen(completionStr))
-                }
+                welf.seasoningLabel.text = completionStr.capitalizedString
+                welf.seasoningButton.selected = true
+                welf.seasoningFilter = filterGen(completionStr)
             }
         }
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func clearButtonTapped() {
+        clearFilters()
+        deselectButtons()
+        clearAnswerLabels()
+        updateButtonsAndLabels()
+    }
     
 }
 

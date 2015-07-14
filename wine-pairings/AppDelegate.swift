@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         let landingVC = LandingViewController()
-        landingVC.maybeContext = self.managedObjectContext
+        landingVC.managedObjectContext = self.managedObjectContext
         
         let aWindow = UIWindow(frame: UIScreen.mainScreen().bounds)
         aWindow.backgroundColor = UIColor.whiteColor()

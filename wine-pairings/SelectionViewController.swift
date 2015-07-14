@@ -8,7 +8,8 @@
 
 import UIKit
 
-typealias FilterClosureGenerator = String -> Varietal -> Bool
+typealias FilterClosure = Varietal -> Bool
+typealias FilterClosureGenerator = String -> FilterClosure
 typealias CompletionClosure = String -> Void
 
 class SelectionViewController: UIViewController {
