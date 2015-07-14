@@ -120,6 +120,9 @@ class LandingViewController: UIViewController {
         super.updateViewConstraints()
     }
     
+    
+//    MARK: Update UI
+    
     func updateButtonsAndLabels() {
         if let varietals = allVarietals {
             let filters = [foodTypeFilter, spicinessFilter, seasoningFilter].filter{ $0 != nil}.map{ $0! }
@@ -139,8 +142,6 @@ class LandingViewController: UIViewController {
             }
         }
     }
-    
-//    MARK: Update UI
     
     func clearFilters() {
         seasoningFilter = nil
